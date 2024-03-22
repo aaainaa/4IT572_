@@ -52,7 +52,7 @@ jobs:
 
       - name: Build
         run: 
-          npm rubuild node-sass --force
+          npm rebuild node-sass --force
           npm run build -- --colours
           
             
