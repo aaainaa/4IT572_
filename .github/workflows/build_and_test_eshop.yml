@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v4.0.2
         with: 
           path: node_modules
-          key: node_modules-${{ hashFiles('***/pachage-lock.json') }}
+          key: node_modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: node_modules-
 
       - name: Install packages with npm
@@ -47,19 +47,19 @@ jobs:
 
       - name: Cache node modules
         uses: actions/cache@v4.0.2
-        with: 
+        with:
           path: node_modules
-          key: node_modules-${{ hashFiles('***/pachage-lock.json') }}
+          key: node_modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Build
-        run: 
+        run: |
           npm rebuild node-sass --force
-          npm run build -- --colours
-      
+          npm run build -- --colors
+
       - name: Cache node modules and build
         if: ${{ github.ref == 'refs/heads/main'}}
         uses: actions/cache@v4.0.2
-        with: 
+        with:
           path: |
             ~/.npm
             ./node_modules
@@ -86,14 +86,14 @@ jobs:
 
       - name: Cache node modules
         uses: actions/cache@v4.0.2
-        with: 
+        with:
           path: node_modules
-          key: node_modules-${{ hashFiles('***/pachage-lock.json') }}
+          key: node_modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Run unit
-        run: 
+        run: |
           npm rebuild node-sass --force
-          npm run test -- --colours
+          npm run test -- --colors
 
   Deploy: 
     needs: [Build, Test]
