@@ -2,7 +2,7 @@ import formatPrice from '../formatPrice';
 
 describe('[utils] - formatPrice', () => {
   test('should replace price dot decimal with comma when currencyId is BRL', () => {
-    expect(formatPrice(10.9, 'BRL')).toBe('10,90');
+    expect(formatPrice(10.9, 'BRL')).toBe('aaaa10,90');
   });
 
   test('should return price as string as default when no currencyId match', () => {
