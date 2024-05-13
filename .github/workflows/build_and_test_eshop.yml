@@ -111,15 +111,7 @@ jobs:
         uses: actions/setup-python@v5.1.0
 
       - name: Install essentials
-        run: |
-          yum -y instal pip
-          pip3 install boto boto3
-
-      - name: Install Ansible
-        uses: alex-oleshkevich/setup-ansible@9.3.0 
-  
-      - name: Print Ansible version
-        run: ansible-playbook --version
+        run: pip3 install ansible boto boto3
 
       - name: Create pem file
         run: |
