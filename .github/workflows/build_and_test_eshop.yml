@@ -116,9 +116,7 @@ jobs:
           pip3 install boto boto3
 
       - name: Install Ansible
-        uses: alex-oleshkevich/setup-ansible@VERSION 
-        with:
-          version: "9.3.0"
+        uses: alex-oleshkevich/setup-ansible@9.3.0 
   
       - name: Print Ansible version
         run: ansible-playbook --version
