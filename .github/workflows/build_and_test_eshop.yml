@@ -119,13 +119,13 @@ jobs:
       - name: Create Vault File
         run: |
           mkdir group_vars group_vars/all
-          printf 'access_key: ${{ secrets.AWS_ACCESS_KEY }}\n' >> group_vars/all/aws.yml
-          printf 'secret_key: ${{ secrets.AWS_SECRET_KEY }}\n' >> group_vars/all/aws.yml
-          printf 'session_token: ${{ secrets.AWS_SESSION_TOKEN }}' >> group_vars/all/aws.yml
-          ansible-vault encrypt group_vars/all/aws.yml --vault-password-file <(echo "${{ secrets.VAULT_PASSWORD }}")
+          printf 'access_key: ${{ secrets.AWS_ACCESS_KEY }}\n' >> group_vars/all/aws.yaml
+          printf 'secret_key: ${{ secrets.AWS_SECRET_KEY }}\n' >> group_vars/all/aws.yaml
+          printf 'session_token: ${{ secrets.AWS_SESSION_TOKEN }}' >> group_vars/all/aws.yaml
+          ansible-vault encrypt group_vars/all/aws.yaml --vault-password-file=<(echo "${{ secrets.VAULT_PASSWORD }}")
 
       - name: Run deploy script in AWS EC 2
-        run: ansible-playbook ansible/ec2_deploy.yml --vault-password-file <(echo "${{ secrets.VAULT_PASSWORD }}") --user ec2-user --key-file test.pem
+        run: ansible-playbook ansible/ec2_deploy.yml --vault-password-file=<(echo "${{ secrets.VAULT_PASSWORD }}") --user ec2-user --key-file test.pem
 
 
           
