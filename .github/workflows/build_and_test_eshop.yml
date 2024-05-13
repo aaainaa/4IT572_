@@ -118,9 +118,10 @@ jobs:
 
       - name: Create Vault File
         run: |
-          printf 'access_key: ${{ secrets.AWS_ACCESS_KEY }}\n' >> aws.yml
-          printf 'secret_key: ${{ secrets.AWS_SECRET_KEY }}\n' >> aws.yml
-          printf 'session_token: ${{ secrets.AWS_SESSION_TOKEN }}' >> aws.yml
+          mkdir group_vars group_vars/all
+          printf 'access_key: ${{ secrets.AWS_ACCESS_KEY }}\n' >> group_vars/all/aws.yml
+          printf 'secret_key: ${{ secrets.AWS_SECRET_KEY }}\n' >> group_vars/all/aws.yml
+          printf 'session_token: ${{ secrets.AWS_SESSION_TOKEN }}' >> group_vars/all/aws.yml
           ansible-vault encrypt aws.yml --vault-password-file <(echo "${{ secrets.VAULT_PASSWORD }}")
 
       - name: Run deploy script in AWS EC 2
