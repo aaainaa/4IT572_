@@ -6,7 +6,6 @@ on:
 
 jobs:
   Install:
-    if: ${{ github.ref == 'refs/heads/main'}}
     runs-on: ubuntu-latest
     
     steps:
@@ -95,7 +94,7 @@ jobs:
           npm run test -- --colors
 
   Deploy: 
-    # needs: [Build, Test]
+    needs: [Build, Test]
     # if: ${{ github.ref == 'refs/heads/main'}}
     runs-on: ubuntu-latest
 
