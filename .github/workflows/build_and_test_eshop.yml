@@ -130,12 +130,13 @@ jobs:
           echo 'access_key: ${{ secrets.AWS_ACCESS_KEY }}' > group_vars/all/aws.yml
           echo 'secret_key: ${{ secrets.AWS_SECRET_KEY }}' >> group_vars/all/aws.yml
           echo 'session_token: ${{ secrets.AWS_SESSION_TOKEN }}' >> group_vars/all/aws.yml
-          echo '${{ secrets.VAULT_PASSWORD }}' > vault_password
+          
 
       - name: Run deploy script in AWS EC 2
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
         working-directory: ./ansible
         run: |
+          echo '${{ secrets.VAULT_PASSWORD }}' > vault_password
           ansible-vault encrypt group_vars/all/aws.yml --vault-password-file vault_password
           ansible-playbook ec2_deploy.yml --vault-pass-file vault_password --user ec2-user --key-file test.pem
