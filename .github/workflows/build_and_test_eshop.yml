@@ -67,8 +67,6 @@ jobs:
           key: ${{ runner.os }}-build-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-build-${{ github.run_id }}
 
-            
-
   Test :
     needs: Install
     runs-on: ubuntu-latest
@@ -105,23 +103,37 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:          
           token: ${{ secrets.WORKFLOW_TOKEN }}
-      
-      - name: Load node modules and build folder
-        uses: actions/cache@v4.0.2
-        with: 
+
+      - name: Load node.js modules and build folder
+        uses: actions/cache@v3.3.2
+        with:
           path: |
             ~/.npm
             ./node_modules
             ./build
           key: ${{ runner.os }}-build-${{ github.run_id }}
+  
+      - name: Setup Python
+        uses: actions/setup-python@v5.1.0
 
-      - name: Deploy to Firebase
-        uses: lowply/deploy-firebase@v0.0.5
+      - name: Install Ansible
+        run: pip3 install ansible boto boto3
+
+      - name: Create secrets and pem files
+        working-directory: ./ansible
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > test.pem
+          chmod 400 test.pem
+          echo '${{ secrets.VAULT_PASSWORD }}' > vault_password
+          mkdir -p group_vars/all/
+          echo 'access_key: ${{ secrets.AWS_ACCESS_KEY }}' > group_vars/all/aws.yml
+          echo 'secret_key: ${{ secrets.AWS_SECRET_KEY }}' >> group_vars/all/aws.yml
+          echo 'session_token: ${{ secrets.AWS_SESSION_TOKEN }}' >> group_vars/all/aws.yml
+
+      - name: Run deploy script in AWS EC 2
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_PROJECT: tatarova-devops
-
-
-            
-        
-       
+          ANSIBLE_HOST_KEY_CHECKING: False
+        working-directory: ./ansible
+        run: |
+          ansible-vault encrypt group_vars/all/aws.yml --vault-password-file vault_password
+          ansible-playbook ec2_deploy.yml --vault-pass-file vault_password --user ec2-user --key-file test.pem
