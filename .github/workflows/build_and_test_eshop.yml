@@ -104,10 +104,19 @@ jobs:
         with:          
           token: ${{ secrets.WORKFLOW_TOKEN }}
 
+      - name: Load node.js modules and build folder
+        uses: actions/cache@v3.3.2
+        with:
+          path: |
+            ~/.npm
+            ./node_modules
+            ./build
+          key: ${{ runner.os }}-build-${{ github.run_id }}
+  
       - name: Setup Python
         uses: actions/setup-python@v5.1.0
 
-      - name: Install essentials
+      - name: Install Ansible
         run: pip3 install ansible boto boto3
 
       - name: Create pem file
@@ -121,7 +130,12 @@ jobs:
           echo 'access_key: ${{ secrets.AWS_ACCESS_KEY }}' > group_vars/all/aws.yml
           echo 'secret_key: ${{ secrets.AWS_SECRET_KEY }}' >> group_vars/all/aws.yml
           echo 'session_token: ${{ secrets.AWS_SESSION_TOKEN }}' >> group_vars/all/aws.yml
-          ansible-vault encrypt group_vars/all/aws.yml --vault-password-file=<(echo "${{ secrets.VAULT_PASSWORD }}")
+          echo '${{ secrets.VAULT_PASSWORD }}' > vault_password
 
       - name: Run deploy script in AWS EC 2
-        run: ansible-playbook ansible/ec2_deploy.yml --vault-password-file=<(echo "${{ secrets.VAULT_PASSWORD }}") --user ec2-user --key-file test.pem
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
+        working-directory: ./ansible
+        run: |
+          ansible-vault encrypt group_vars/all/aws.yml --vault-password-file vault_password
+          ansible-playbook ec2_deploy.yml --vault-pass-file vault_password --user ec2-user --key-file test.pem
